@@ -1,6 +1,6 @@
 import express from "express";
 import { connexionToDatabase } from "../lib/db.js";
-import bcrypt from "bcrypt"
+import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
 
 const router = express.Router()
@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
         return res.status(409).json({message: "Email déjà utilisé !"})
       }
 
-       hashedPassword = await bcrypt.hash(password, 10)
+       hashedPassword = await bcryptjs.hash(password, 10)
        console.log("hashedPassword",hashedPassword);
        
       await db.query(
@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
         return res.status(404).json({message: "Utilisateur introuvable !"})
       }
 
-      const isPasswordValid = await bcrypt.compare(password, rows[0].motDePasse)
+      const isPasswordValid = await bcryptjs.compare(password, rows[0].motDePasse)
       if(!isPasswordValid){
         return res.status(401).json({message: "Mot de passe incorrect !"})
       }
