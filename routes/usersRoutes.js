@@ -1,13 +1,13 @@
 import express from "express";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { isAdmin } from "../middlewares/isAdmin.js";
-import { connexionToDatabase } from "../lib/db.js";
+import { getDatabasePool } from "../lib/db.js";
 
 const router = express.Router();
 
 router.get("/mes-taches", verifyToken, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
       const userId = req.user.userId;
   
       const [taches] = await db.query(`
@@ -37,7 +37,7 @@ router.get("/mes-taches", verifyToken, async (req, res) => {
     const userId = req.user.userId;
   
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
   
       // Sélectionne les programmes auxquels l'utilisateur a des tâches assignées
       const [programmes] = await db.query(
@@ -60,7 +60,7 @@ router.get("/mes-taches", verifyToken, async (req, res) => {
   // ✅ Route pour démarrer une tâche
 router.put("/taches/:id/start", verifyToken, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
       const userId = req.user.userId;
       const tacheId = req.params.id;
   
@@ -87,7 +87,7 @@ router.put("/taches/:id/start", verifyToken, async (req, res) => {
 //   route pour afficher les statistique 
 router.get("/dashboard", verifyToken, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
       const userId = req.user.userId;
   
       // Total des tâches

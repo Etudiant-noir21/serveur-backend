@@ -4,7 +4,7 @@ import fs from "fs";
 import express from "express";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { isAdmin } from "../middlewares/isAdmin.js";
-import { connexionToDatabase } from "../lib/db.js";
+import { getDatabasePool } from "../lib/db.js";
 const router = express.Router();
 // 📁 Création du dossier si pas présent
 const uploadDir = "uploads";
@@ -37,7 +37,7 @@ router.post(
       const files = req.files.map((file) => file.filename);
   
       try {
-        const db = await connexionToDatabase();
+        const db = await getDatabasePool();
   
         // ✅ Enregistrement de la livraison
         await db.query(
@@ -65,7 +65,7 @@ router.post(
 // recuperation de toutes les livraisons 
 router.get("/livraisons", verifyToken, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
   
       const [livraisons] = await db.query(`
         SELECT l.id, l.description, l.date, l.fichiers,
@@ -94,7 +94,7 @@ router.get("/livraisons", verifyToken, async (req, res) => {
 //   recuperer mes livraisons 
 router.get("/mes-livraisons", verifyToken, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
       const userId = req.user.userId;
   
       const [livraisons] = await db.query(`

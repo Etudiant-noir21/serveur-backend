@@ -1,5 +1,5 @@
 import express from "express";
-import { connexionToDatabase } from "../lib/db.js";
+import { getDatabasePool } from "../lib/db.js";
 import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
 
@@ -15,7 +15,7 @@ router.post('/register', async (req, res) => {
     let hashedPassword
     
     try{
-      const db = await connexionToDatabase()
+      const db = await getDatabasePool()
       const [rows]= await db.query("SELECT * FROM users WHERE email = ?", [email]) 
       if(rows.length > 0){
         return res.status(409).json({message: "Email déjà utilisé !"})
@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
     const {password,email} = req.body
     try{
-      const db = await connexionToDatabase()
+      const db = await getDatabasePool()
       const [rows]= await db.query("SELECT * FROM users WHERE email = ?", [email]) 
       if(rows.length === 0){
         return res.status(404).json({message: "Utilisateur introuvable !"})

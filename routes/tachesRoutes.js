@@ -1,7 +1,7 @@
 import express from "express";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { isAdmin } from "../middlewares/isAdmin.js";
-import { connexionToDatabase } from "../lib/db.js";
+import { getDatabasePool } from "../lib/db.js";
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.post("/tasks", verifyToken, isAdmin, async (req, res) => {
     console.log("mes donnes envoyer ",req.body);
 
     try{
-      const db= await connexionToDatabase()
+      const db= await getDatabasePool()
     //   inserer les donnes dans la base de donnes
     await db.query(
         "INSERT INTO taches (titre, description,programme_id,assignee_id) VALUES (?, ?, ?, ?)",
@@ -30,7 +30,7 @@ router.post("/tasks", verifyToken, isAdmin, async (req, res) => {
 
 router.get("/taches", verifyToken, isAdmin, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
   
       const [taches] = await db.query(`
         SELECT 

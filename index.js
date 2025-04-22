@@ -17,6 +17,8 @@ app.use("/admin", adminRoutes);
 app.use("/admin",tachesRoutes)
 app.use("/user",usersRoutes)
 app.use("/user",livraisonRoutes)
-app.listen(process.env.PORT, () => {
+
+const port = process.env.DB_PORT
+app.listen(3000, () => {
     console.log("Serveur démarré sur le port 3000");
 })

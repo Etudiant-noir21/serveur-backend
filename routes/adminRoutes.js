@@ -1,7 +1,7 @@
 import express from "express";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { isAdmin } from "../middlewares/isAdmin.js";
-import { connexionToDatabase } from "../lib/db.js";
+import { getDatabasePool } from "../lib/db.js";
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ router.post("/programme", verifyToken, isAdmin, async (req, res) => {
     console.log(req.body);
     
     try{
-        const db = await connexionToDatabase()
+        const db = await getDatabasePool()
         await db.query("INSERT INTO programmes (titre) VALUES (?)", [titre])
         res.status(201).json({message: "Programme ajouté !"})
     }catch(err){
@@ -29,7 +29,7 @@ router.post("/programme", verifyToken, isAdmin, async (req, res) => {
 // voir toutes les programmes
 router.get("/programmes", verifyToken, isAdmin, async (req, res) => {
     try{
-        const db = await connexionToDatabase()
+        const db = await getDatabasePool()
         const [programme] = await db.query("SELECT * FROM programmes")
         res.status(200).json(programme)
     }catch(err){
@@ -40,7 +40,7 @@ router.get("/programmes", verifyToken, isAdmin, async (req, res) => {
 // recuperer utilisateurs 
 router.get("/users", verifyToken, isAdmin, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
       const [users] = await db.query("SELECT id, nom, prenom, email FROM users WHERE role = 'user'");
       res.status(200).json(users);
     } catch (err) {
@@ -51,7 +51,7 @@ router.get("/users", verifyToken, isAdmin, async (req, res) => {
 
 router.get("/utilisateurs", verifyToken, isAdmin, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
       const [users] = await db.query("SELECT id, nom, prenom, email,role FROM users ORDER BY nom ASC");
       res.status(200).json(users);
     } catch (err) {
@@ -63,7 +63,7 @@ router.get("/utilisateurs", verifyToken, isAdmin, async (req, res) => {
 
   router.get("/stats", verifyToken, isAdmin, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
   
       const [[{ total_taches }]] = await db.query("SELECT COUNT(*) AS total_taches FROM taches");
       const [[{ total_programmes }]] = await db.query("SELECT COUNT(*) AS total_programmes FROM programmes");
@@ -83,7 +83,7 @@ router.get("/utilisateurs", verifyToken, isAdmin, async (req, res) => {
 //   Listes des taches users
   router.get("/users-taches", verifyToken, isAdmin, async (req, res) => {
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
   
       // Jointure utilisateurs + tâches + programme
       const [rows] = await db.query(`
@@ -149,7 +149,7 @@ router.get("/utilisateurs", verifyToken, isAdmin, async (req, res) => {
     }
   
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
       await db.query("UPDATE users SET role = ? WHERE id = ?", [role, userId]);
   
       res.status(200).json({ message: "Rôle mis à jour avec succès" });
@@ -169,7 +169,7 @@ router.get("/utilisateurs", verifyToken, isAdmin, async (req, res) => {
     }
   
     try {
-      const db = await connexionToDatabase();
+      const db = await getDatabasePool();
   
       await db.query("UPDATE taches SET assignee_id = ? WHERE id = ?", [
         assignee_id,
