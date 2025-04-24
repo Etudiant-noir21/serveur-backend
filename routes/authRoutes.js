@@ -2,7 +2,7 @@ import express from "express";
 import { getDatabasePool } from "../lib/db.js";
 import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
-import { log } from "console";
+import { error, log } from "console";
 
 const router = express.Router()
 
@@ -65,6 +65,8 @@ router.post('/login', async (req, res) => {
     }
     catch(err){
         res.status(500).json({message: err.message})
+        console.error("Erreur inconnue :", err);
+        
 
     }
 })
