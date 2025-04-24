@@ -9,7 +9,10 @@ import livraisonRoutes from "./routes/livraisonRoutes.js"
 
 dotenv.config();
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'https://dashboard-original.onrender.com',
+    credentials: true 
+  }));
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 app.use("/auth", router);
