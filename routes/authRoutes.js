@@ -2,6 +2,7 @@ import express from "express";
 import { getDatabasePool } from "../lib/db.js";
 import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { log } from "console";
 
 const router = express.Router()
 
@@ -42,6 +43,9 @@ router.post('/register', async (req, res) => {
 // login
 router.post('/login', async (req, res) => {
     const {password,email} = req.body
+    console.log("route login appeler");
+    console.log("donnes recu", req.body);
+    
     try{
       const db = await getDatabasePool()
       const [rows]= await db.query("SELECT * FROM users WHERE email = ?", [email]) 
