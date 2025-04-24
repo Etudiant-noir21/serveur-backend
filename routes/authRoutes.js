@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
     
     try{
       const db = await getDatabasePool()
-      onsole.log("✅ Connexion à la BDD réussie");
+      console.log("✅ Connexion à la BDD réussie");
       const [rows]= await db.query("SELECT * FROM users WHERE email = ?", [email]) 
       console.log("📦 Résultat de la requête :", rows);
       if(rows.length === 0){
