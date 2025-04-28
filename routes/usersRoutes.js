@@ -119,5 +119,41 @@ router.get("/dashboard", verifyToken, async (req, res) => {
     }
   });
   
+  // Like et dislike 
+  router.post("/vote", verifyToken, async (req, res) => {
+    const userId = req.user.userId;
+    const { livraisonId, voteType } = req.body;
+  
+    try {
+      const db = await getDatabasePool();
+  
+      // Vérifie si l'utilisateur a déjà voté pour cette livraison
+      const [existingVote] = await db.query(
+        "SELECT * FROM votes WHERE user_id = ? AND livraison_id = ?", 
+        [userId, livraisonId]
+      );
+  
+      if (existingVote.length > 0) {
+        // Mise à jour du vote existant
+        await db.query(
+          "UPDATE votes SET vote_type = ?, created_at = NOW() WHERE user_id = ? AND livraison_id = ?",
+          [voteType, userId, livraisonId]
+        );
+      } else {
+        // Création d'un nouveau vote
+        await db.query(
+          "INSERT INTO votes (user_id, livraison_id, vote_type) VALUES (?, ?, ?)",
+          [userId, livraisonId, voteType]
+        );
+      }
+  
+      res.status(200).json({ message: "Vote enregistré avec succès" });
+  
+    } catch (err) {
+      console.error("Erreur survenue :", err);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  });
+  
     
 export default router
