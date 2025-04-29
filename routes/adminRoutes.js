@@ -37,6 +37,18 @@ router.get("/programmes", verifyToken, isAdmin, async (req, res) => {
     }
 })
 
+// supprimer programme
+router.delete("/programmes/:id", verifyToken, isAdmin, async (req, res) => {
+    try {
+      const db = await getDatabasePool();
+      const [programme] = await db.query("DELETE FROM programmes WHERE id = ?", [req.params.id]);
+      res.status(200).json(programme);
+    } catch (err) {
+      console.error("Erreur suppression programme :", err.message);
+      res.status(500).json({ message: err.message });
+    }
+  })
+
 // recuperer utilisateurs 
 router.get("/users", verifyToken, isAdmin, async (req, res) => {
     try {
@@ -49,6 +61,20 @@ router.get("/users", verifyToken, isAdmin, async (req, res) => {
     }
   });
 
+  // supprimer utilisateur
+  router.delete("/users/:id", verifyToken, isAdmin, async (req, res) => {
+    try {
+      const db = await getDatabasePool();
+      const [users] = await db.query("DELETE FROM users WHERE id = ?", [req.params.id]);
+      res.status(200).json(users);
+    } catch (err) {
+      console.error("Erreur suppression users :", err.message);
+      res.status(500).json({ message: err.message });
+    }
+  })
+  
+
+// voir tous les utilisateurs
 router.get("/utilisateurs", verifyToken, isAdmin, async (req, res) => {
     try {
       const db = await getDatabasePool();

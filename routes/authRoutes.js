@@ -1,8 +1,7 @@
 import express from "express";
-import { getDatabasePool } from "../lib/db.js";
 import bcryptjs from "bcryptjs"
 import jwt from "jsonwebtoken"
-import { error, log } from "console";
+import { getDatabasePool } from "../lib/db.js";
 
 const router = express.Router()
 
@@ -18,6 +17,8 @@ router.post('/register', async (req, res) => {
     try{
       const db = await getDatabasePool()
       const [rows]= await db.query("SELECT * FROM users WHERE email = ?", [email]) 
+      console.log("rows", rows);
+      
       if(rows.length > 0){
         return res.status(409).json({message: "Email déjà utilisé !"})
       }
@@ -47,7 +48,11 @@ router.post('/login', async (req, res) => {
     console.log("donnes recu", req.body);
     
     try{
+      console.log("avant Db");
+      
       const db = await getDatabasePool()
+      // console.log("DB",db);
+      
       console.log("✅ Connexion à la BDD réussie");
       const [rows]= await db.query("SELECT * FROM users WHERE email = ?", [email]) 
       console.log("📦 Résultat de la requête :", rows);
@@ -66,6 +71,7 @@ router.post('/login', async (req, res) => {
     catch(err){
         res.status(500).json({message: err.message})
         console.error("Erreur inconnue :", err);
+        console.error(err.message);
         
 
     }
